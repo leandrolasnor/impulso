@@ -31,6 +31,8 @@ gem 'pg'
 
 gem 'figaro'
 
+gem 'cpf_cnpj'
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
