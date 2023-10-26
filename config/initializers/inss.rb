@@ -1,37 +1,20 @@
 # frozen_string_literal: true
 
 class INSS
+  TABLE = {
+    0.075 => [1045, 0],
+    0.09 => [2089.60, 1045],
+    0.12 => [3134.40, 2089.60],
+    0.14 => [6101.06, 3134.40]
+  }
+
   def self.[](amount)
-    new.discount(amount)
-  end
-
-  private
-
-  def discount(amount)
-    reduce = 0
-
-    if amount <= 1045
-      return amount * 0.075
-    else
-      reduce += 1045 * 0.075
-    end
-
-    if amount <= 2089.60
-      return ((amount - 1045) * 0.09) + reduce
-    else
-      reduce += 2089.60 * 0.09
-    end
-
-    if amount <= 3134.40
-      return ((amount - 2089.60) * 0.12) + reduce
-    else
-      reduce += 3134.40 * 0.12
-    end
-
-    if amount <= 6101.06
-      ((amount - 3134.40) * 0.14) + reduce
-    else
-      6101.06 * 0.14
-    end
+    TABLE.reduce(0) do |gathered, (percent, wages)|
+      if (wages.second..wages.first).cover?(amount)
+        break gathered + (amount - wages.second) * percent
+      elsif amount > wages.first
+        gathered + (wages.first - wages.second) * percent
+      end
+    end.floor(2)
   end
 end
