@@ -6,16 +6,17 @@ class UpdateProponent::Contract < ApplicationContract
     optional(:taxpayer_number).filled(:integer)
     optional(:birthdate).filled(:date)
     optional(:contacts).array(:hash) do
-      optional(:number).filled(:integer)
+      optional(:number).filled(:string)
     end
     optional(:addresses).array(:hash) do
-      optional(:_id).filled(:integer)
+      optional(:id).filled(:integer)
       optional(:address).filled(:string)
       optional(:number).filled(:string)
       optional(:district).filled(:string)
       optional(:city).filled(:string)
       optional(:state).filled(:string)
       optional(:zip).filled(:string)
+      optional(:_destroy).filled(:boolean)
     end
   end
 
