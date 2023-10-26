@@ -26,6 +26,11 @@ class ProponentsController < BaseController
     render json: content, status: status, serializer: serializer
   end
 
+  def discount_amount
+    status, content, serializer = Http::DiscountAmount::Service.(discount_amount_params)
+    render json: content, status: status, serializer: serializer
+  end
+
   private
 
   def create_params
@@ -77,5 +82,9 @@ class ProponentsController < BaseController
 
   def show_params
     params.permit(:id)
+  end
+
+  def discount_amount_params
+    params.permit(:amount)
   end
 end

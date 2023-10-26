@@ -9,6 +9,7 @@ class INSS
   }
 
   def self.[](amount)
+    amount = amount.to_f
     TABLE.reduce(0) do |gathered, (percent, wages)|
       if (wages.second..wages.first).cover?(amount)
         break gathered + (amount - wages.second) * percent
