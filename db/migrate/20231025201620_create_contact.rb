@@ -7,6 +7,6 @@ class CreateContact < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_foreign_key :addresses, :proponents, column: :proponent_id
+    add_foreign_key :contacts, :proponents, column: :proponent_id
   end
 end
