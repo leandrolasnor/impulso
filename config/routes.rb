@@ -9,6 +9,13 @@ Rails.application.routes.draw do
   Sidekiq::Web.use ActionDispatch::Session::CookieStore, key: '_interslice_session'
   mount Sidekiq::Web => '/sidekiq'
 
+  scope '/v1' do
+    resources :proponents, only: [:show, :create, :update, :destroy] do
+      get :list, on: :collection
+      get :discount_amount, on: :member
+    end
+  end
+
   root "rails/health#show", as: :rails_health_check
   match '*path', via: :all, to: proc { [404, {}, []] }
 end
