@@ -6,9 +6,9 @@ class Http::DestroyProponent::Service < Http::Service
          default: -> { Http::DestroyProponent::Serializer },
          reader: :private
 
-  option :transaction, type: Interface(:call), default: -> { DestroyProponent::Transaction }, reader: :private
+  option :transaction, type: Interface(:call), default: -> { DestroyProponent::Transaction.new }, reader: :private
 
-  Contract = Http::DestroyProponent::Contract
+  Contract = Http::DestroyProponent::Contract.new
 
   def call
     transaction.call(params) do
@@ -25,8 +25,8 @@ class Http::DestroyProponent::Service < Http::Service
         [:internal_server_error]
       end
 
-      _1.success do |_destroyed|
-        [:internal_server_error]
+      _1.success do |destroyed|
+        [:ok, destroyed, serializer]
       end
     end
   end
