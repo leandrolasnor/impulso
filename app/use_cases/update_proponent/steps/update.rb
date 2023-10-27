@@ -1,21 +1,19 @@
 # frozen_string_literal: true
 
 class UpdateProponent::Steps::Update
-  include Dry::Monads[:result]
-  include Dry::Events::Publisher[:hero_edited]
+  include Dry::Events::Publisher[:proponent_update]
   include Dry.Types()
   extend  Dry::Initializer
 
-  register_event self.to_s.tableize
+  register_event 'proponent.updated'
 
-  option :model, type: Interface(:update), default: -> { UpdateProponent::Model::Proponent }, reader: :private
-
-  def call(params)
+  def call(record:, **params)
     ApplicationRecord.transaction do
-      updated = model.find(params[:id]).lock!
-      updated.update!(params.to_h)
-      publish(self.to_s.tableize, record: updated)
-      updated
+      record.with_lock do
+        record.update!(params)
+      end
+      publish('proponent.updated', record: record)
+      record
     end
   end
 end
