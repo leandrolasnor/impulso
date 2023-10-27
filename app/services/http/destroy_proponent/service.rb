@@ -12,8 +12,8 @@ class Http::DestroyProponent::Service < Http::Service
 
   def call
     transaction.call(params) do
-      _1.failure :find do |f|
-        [:not_found, f.message]
+      _1.failure :find do
+        [:not_found, { error: I18n.t(:not_found) }]
       end
 
       _1.failure :destroy do |f|
