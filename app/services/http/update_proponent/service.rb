@@ -6,12 +6,16 @@ class Http::UpdateProponent::Service < Http::Service
          default: -> { Http::UpdateProponent::Serializer },
          reader: :private
 
-  option :transaction, type: Interface(:call), default: -> { UpdateProponent::Transaction }, reader: :private
+  option :transaction, type: Interface(:call), default: -> { UpdateProponent::Transaction.new }, reader: :private
 
   def call
     transaction.call(params) do
       _1.failure :validate do |f|
         [:unprocessable_entity, f.errors.to_h]
+      end
+
+      _1.failure :find do
+        [:not_found, { error: I18n.t(:not_found) }]
       end
 
       _1.failure do |f|
