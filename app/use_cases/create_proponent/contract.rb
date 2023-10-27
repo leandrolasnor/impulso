@@ -3,17 +3,18 @@
 class CreateProponent::Contract < ApplicationContract
   params do
     required(:name).filled(:string)
-    required(:taxpayer_number).filled(:integer)
+    required(:taxpayer_number).filled(:string)
     required(:birthdate).filled(:date)
-    required(:contacts).array(:hash) do
+    required(:amount).filled(:float)
+    optional(:contacts_attributes).array(:hash) do
       required(:number).filled(:integer)
     end
-    required(:addresses).array(:hash) do
-      optional(:address).filled(:string)
-      optional(:number).filled(:string)
-      optional(:district).filled(:string)
-      optional(:city).filled(:string)
-      optional(:state).filled(:string)
+    optional(:addresses_attributes).array(:hash) do
+      required(:address).filled(:string)
+      required(:number).filled(:string)
+      required(:district).filled(:string)
+      required(:city).filled(:string)
+      required(:state).filled(:string)
       required(:zip).filled(:string)
     end
   end
