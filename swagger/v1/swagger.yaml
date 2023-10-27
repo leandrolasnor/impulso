@@ -3,9 +3,131 @@ openapi: 3.0.1
 info:
   title: API V1
   version: v1
-paths: {}
+paths:
+  "/v1/proponents/list":
+    get:
+      summary: list proponent
+      tags:
+      - Proponents
+      parameters:
+      - name: page
+        in: query
+        description: pagination
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: pagination
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+  "/v1/discount_amount/{amount}":
+    parameters:
+    - name: amount
+      in: path
+      description: amount
+      required: true
+      schema:
+        type: string
+    get:
+      summary: discount_amount proponent
+      tags:
+      - Proponent
+      responses:
+        '200':
+          description: successful
+  "/v1/proponents":
+    post:
+      summary: create proponent
+      tags:
+      - Proponent
+      parameters: []
+      responses:
+        '201':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  required: true
+                taxpayer_number:
+                  type: integer
+                birthdate:
+                  type: number
+                  required: true
+                amount:
+                  type: number
+                  required: true
+                contacts_attributes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      number:
+                        type: string
+                  required:
+                  - number
+                addresses_attributes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      number:
+                        type: string
+                      district:
+                        type: string
+                      city:
+                        type: string
+                      state:
+                        type: string
+                      zip:
+                        type: string
+                  required:
+                  - address
+                  - number
+                  - district
+                  - city
+                  - state
+                  - zip
+              required:
+              - name
+              - taxpayer_number
+              - birthdate
+              - amount
+  "/v1/proponents/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show proponent
+      tags:
+      - Proponents
+      responses:
+        '404':
+          description: not found
+        '200':
+          description: successful
+    delete:
+      summary: delete proponent
+      tags:
+      - Proponents
+      responses:
+        '200':
+          description: successful
 servers:
 - url: https://{defaultHost}
   variables:
     defaultHost:
-      default: www.example.com
+      default: 127.0.0.1:3000
