@@ -93,6 +93,32 @@ RSpec.describe ProponentsController do
         },
         required: [:name, :taxpayer_number, :birthdate, :amount]
       }
+
+      response(422, 'invalid params') do
+        let(:params) do
+          {
+            name: '',
+            taxpayer_number: '',
+            birthdate: '',
+            amount: ''
+          }
+        end
+
+        let(:expected_body) do
+          {
+            amount: ["must be filled"],
+            birthdate: ["must be filled"],
+            name: ["must be filled"],
+            taxpayer_number: ["must be filled"]
+          }
+        end
+
+        run_test! do |response|
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(parsed_body).to eq(expected_body)
+        end
+      end
+
       response(201, 'successful') do
         let(:name) { 'Proponent Name' }
         let(:taxpayer_number) { CPF.generate }
@@ -159,6 +185,18 @@ RSpec.describe ProponentsController do
         properties: { amount: { type: :number } },
         required: [:amount]
       }
+
+      response(404, 'not found') do
+        let(:id) { 0 }
+        let(:params) { { amount: 2345 } }
+        let(:expected_body) { { error: I18n.t(:not_found) } }
+
+        run_test! do |response|
+          expect(response).to have_http_status(:not_found)
+          expect(parsed_body).to eq(expected_body)
+        end
+      end
+
       response(200, 'successful') do
         let(:proponent) { create(:proponent, amount: old_amount) }
         let(:id) { proponent.id }
@@ -272,6 +310,43 @@ RSpec.describe ProponentsController do
         end
       end
 
+      response(422, 'invalid params') do
+        let(:proponent) { create(:proponent) }
+        let(:id) { proponent.id }
+        let(:birthdate) { '2010-02-28' }
+
+        let(:params) do
+          {
+            name: '',
+            birthdate: birthdate.to_date.to_s,
+            contacts_attributes: [{ number: nil }],
+            addresses_attributes: [{ address: '' }]
+          }
+        end
+
+        let(:expected_body) do
+          {
+            addresses_attributes: {
+              '0': {
+                address: ["must be filled"]
+              }
+            },
+            contacts_attributes: {
+              '0': {
+                number: ["must be filled"]
+              }
+            },
+            birthdate: ["Age must be between 18 and 80 years old"],
+            name: ["must be filled"]
+          }
+        end
+
+        run_test! do |response|
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(parsed_body).to eq(expected_body)
+        end
+      end
+
       response(200, 'successful') do
         let(:proponent) { create(:proponent) }
         let(:id) { proponent.id }
@@ -327,6 +402,15 @@ RSpec.describe ProponentsController do
     delete('delete proponent') do
       tags 'Proponents'
       parameter name: :id, in: :path, type: :string, description: 'id'
+      response(404, 'successful') do
+        let(:id) { 0 }
+        let(:expected_body) { { error: I18n.t(:not_found) } }
+
+        run_test! do |response|
+          expect(response).to have_http_status(:not_found)
+          expect(parsed_body).to eq(expected_body)
+        end
+      end
       response(200, 'successful') do
         let(:proponent) { create(:proponent) }
         let(:id) { proponent.id }
