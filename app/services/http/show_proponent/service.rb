@@ -16,6 +16,6 @@ class Http::ShowProponent::Service < Http::Service
 
     return [:ok, res.value!, serializer] if res.success?
 
-    [:unprocessable_entity, res.exception.message]
+    [:not_found, { error: I18n.t(:not_found) }]
   end
 end
