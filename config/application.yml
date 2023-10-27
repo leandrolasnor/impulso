@@ -12,3 +12,5 @@
 
 development:
   REDIS_URL: 'redis://redis:6379'
+test:
+  REDIS_URL: 'redis://redis:6379'
