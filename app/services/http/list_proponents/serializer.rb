@@ -4,8 +4,15 @@ class Http::ListProponents::Serializer < ActiveModel::Serializer
   attributes :id,
              :name,
              :taxpayer_number,
-             :birthdate
+             :birthdate,
+             :amount,
+             :discount_amount
 
-  has_many :addresses
-  has_many :contacts
+  def amount
+    object.amount.to_s
+  end
+
+  def discount_amount
+    object.discount_amount.to_s
+  end
 end
