@@ -8,17 +8,17 @@ class UpdateProponent::Contract < ApplicationContract
     optional(:contacts_attributes).array(:hash) do
       optional(:id).maybe(:integer)
       optional(:number).filled(:string)
-      optional(:_destroy).filled(:bool)
+      optional(:_destroy).maybe(:bool)
     end
     optional(:addresses_attributes).array(:hash) do
       optional(:id).maybe(:integer)
       optional(:address).filled(:string)
-      optional(:number).filled(:string)
-      optional(:district).filled(:string)
-      optional(:city).filled(:string)
-      optional(:state).filled(:string)
-      optional(:zip).filled(:string)
-      optional(:_destroy).filled(:bool)
+      optional(:number).maybe(:string)
+      optional(:district).maybe(:string)
+      optional(:city).maybe(:string)
+      optional(:state).maybe(:string)
+      optional(:zip).maybe(:string)
+      optional(:_destroy).maybe(:bool)
     end
   end
 
