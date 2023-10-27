@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   scope '/v1' do
     resources :proponents, only: [:show, :create, :update, :destroy] do
       get :list, on: :collection
+      patch :update_amount, on: :member
     end
 
     get 'discount_amount/:amount', to: 'proponents#discount_amount'
