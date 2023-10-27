@@ -16,6 +16,11 @@ class ProponentsController < BaseController
     render json: content, status: status, serializer: serializer
   end
 
+  def update_amount
+    status, content, serializer = Http::UpdateAmountProponent::Service.(update_amount_params)
+    render json: content, status: status, serializer: serializer
+  end
+
   def list
     status, content, serializer = Http::ListProponents::Service.(list_params)
     render json: content, status: status, each_serializer: serializer
@@ -55,13 +60,15 @@ class ProponentsController < BaseController
     params.permit(:page, :per_page)
   end
 
+  def update_amount_params
+    params.permit(:id, :amount)
+  end
+
   def update_params
     params.permit(
       :id,
       :name,
-      :taxpayer_number,
       :birthdate,
-      :amount,
       addresses_attributes: [
         :id,
         :address,
