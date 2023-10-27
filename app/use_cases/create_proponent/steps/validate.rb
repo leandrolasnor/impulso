@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateHero::Steps::Validate
+class CreateProponent::Steps::Validate
   include Dry::Monads[:result]
   include Dry.Types()
   extend  Dry::Initializer

@@ -6,9 +6,10 @@ class CreateProponent::Steps::Create
   include Dry.Types()
   extend  Dry::Initializer
 
-  register_event self.to_s.tableize
+  register_event 'proponent.created'
 
   option :model, type: Interface(:create), default: -> { CreateProponent::Model::Proponent }, reader: :private
+  option :calculator, type: Instance(Proc), default: -> { proc { INSS[_1] } }, reader: :private
 
   def call(params)
     record = model.create do
@@ -16,11 +17,11 @@ class CreateProponent::Steps::Create
       _1.taxpayer_number = params[:taxpayer_number]
       _1.birthdate = params[:birthdate]
       _1.amount = params[:amount]
-      _1.discount_amount!
-      _1.addresses_attributes = params[:addresses]
-      _1.contacts_attributes = params[:contacts]
+      _1.discount_amount = calculator.(_1.amount)
+      _1.addresses_attributes = params[:addresses_attributes].presence || []
+      _1.contacts_attributes = params[:contacts_attributes].presence || []
     end
-    publish(self.to_s.tableize, record: record)
-    created
+    publish('proponent.created', record: record)
+    record
   end
 end
