@@ -24,15 +24,17 @@ RSpec.describe ProponentsController do
           }
         end
 
-        before do |example|
-          proponents
-          submit_request(example.metadata)
-        end
+        context 'on success' do
+          before do |example|
+            proponents
+            submit_request(example.metadata)
+          end
 
-        it 'returns a valid 200 response' do |_example|
-          expect(response).to have_http_status(:ok)
-          expect(parsed_body.first).to match(expected_body)
-          expect(parsed_body.count).to eq(per_page)
+          it 'returns a valid 200 response' do |_example|
+            expect(response).to have_http_status(:ok)
+            expect(parsed_body.first).to match(expected_body)
+            expect(parsed_body.count).to eq(per_page)
+          end
         end
       end
     end
@@ -49,6 +51,41 @@ RSpec.describe ProponentsController do
         run_test! do |response|
           expect(response).to have_http_status(:ok)
           expect(parsed_body).to eq(expected_body)
+        end
+      end
+    end
+  end
+
+  path '/v1/proponents/report' do
+    get('report') do
+      tags 'Proponent'
+      response(200, 'successful') do
+        let(:expected_body) do
+          {
+            '0.075' => be_a(Integer),
+            '0.09' => be_a(Integer),
+            '0.12' => be_a(Integer),
+            '0.14' => be_a(Integer)
+          }
+        end
+
+        let(:proponents) do
+          create_list(:proponent, 2, fee: "0.075")
+          create_list(:proponent, 3, fee: "0.09")
+          create_list(:proponent, 4, fee: "0.12")
+          create_list(:proponent, 5, fee: "0.14")
+        end
+
+        context 'on success' do
+          before do |example|
+            proponents
+            submit_request(example.metadata)
+          end
+
+          it 'returns a valid 200 response' do |_example|
+            expect(response).to have_http_status(:ok)
+            expect(parsed_body.stringify_keys).to match(expected_body)
+          end
         end
       end
     end
@@ -100,7 +137,8 @@ RSpec.describe ProponentsController do
             name: '',
             taxpayer_number: '',
             birthdate: '',
-            amount: ''
+            amount: '',
+            contacts_attributes: [{ number: '' }]
           }
         end
 
@@ -109,7 +147,8 @@ RSpec.describe ProponentsController do
             amount: ["must be filled"],
             birthdate: ["must be filled"],
             name: ["must be filled"],
-            taxpayer_number: ["must be filled"]
+            taxpayer_number: ["must be filled"],
+            contacts_attributes: { '0' => { number: ['must be filled'] } }.symbolize_keys
           }
         end
 
@@ -124,7 +163,7 @@ RSpec.describe ProponentsController do
         let(:taxpayer_number) { CPF.generate }
         let(:birthdate) { '1992-02-28' }
         let(:amount) { 1988.20 }
-        let(:discount_amount) { INSS[amount] }
+        let(:discount_amount) { INSS[amount].first }
         let(:contact) { build(:contact).attributes }
         let(:address) { build(:address).attributes }
 
@@ -186,39 +225,72 @@ RSpec.describe ProponentsController do
         required: [:amount]
       }
 
-      response(404, 'not found') do
+      response(200, 'successful') do
         let(:id) { 0 }
-        let(:params) { { amount: 2345 } }
-        let(:expected_body) { { error: I18n.t(:not_found) } }
+        let(:amount) { 2788.30 }
+        let(:params) { { id: "0", amount: amount } }
 
-        run_test! do |response|
-          expect(response).to have_http_status(:not_found)
-          expect(parsed_body).to eq(expected_body)
+        context 'on success' do
+          before do |example|
+            allow(Http::UpdateAmountProponent::Job).to receive(:perform_async).with(params.stringify_keys)
+            submit_request(example.metadata)
+          end
+
+          it 'returns a valid 200 response' do |_example|
+            expect(response).to have_http_status(:ok)
+            expect(parsed_body).to be_nil
+            expect(Http::UpdateAmountProponent::Job).to have_received(:perform_async).with(params.stringify_keys)
+          end
         end
       end
 
-      response(200, 'successful') do
-        let(:proponent) { create(:proponent, amount: old_amount) }
-        let(:id) { proponent.id }
-        let(:old_amount) { 1320.40 }
-        let(:amount) { 2788.30 }
-        let(:params) { { amount: amount } }
+      response(422, 'successful') do
+        let(:id) { 0 }
+        let(:amount) { -1234 }
+        let(:params) { { id: "0", amount: amount } }
 
         let(:expected_body) do
           {
-            id: be_a(Integer),
-            name: proponent.name,
-            taxpayer_number: proponent.taxpayer_number,
-            birthdate: proponent.birthdate.to_date.to_s,
-            amount: amount.to_s,
-            discount_amount: INSS[amount].to_s
+            amount: ["must be greater than 0"]
           }
         end
 
-        run_test! do |response|
-          expect(response).to have_http_status(:ok)
-          expect(parsed_body).to match(expected_body)
-          expect { proponent.reload }.to change(proponent, :amount).from(old_amount).to(amount)
+        context 'on failure' do
+          before do |example|
+            allow(Http::UpdateAmountProponent::Job).to receive(:perform_async).with(params.stringify_keys)
+            submit_request(example.metadata)
+          end
+
+          it 'returns a valid 200 response' do |_example|
+            expect(response).to have_http_status(:unprocessable_entity)
+            expect(parsed_body).to eq(expected_body)
+            expect(Http::UpdateAmountProponent::Job).not_to have_received(:perform_async).with(params.stringify_keys)
+          end
+        end
+      end
+
+      response(422, 'successful') do
+        let(:id) { 0 }
+        let(:amount) { 100000000 }
+        let(:params) { { id: "0", amount: amount } }
+
+        let(:expected_body) do
+          {
+            amount: ["must be less than 100000000"]
+          }
+        end
+
+        context 'on failure' do
+          before do |example|
+            allow(Http::UpdateAmountProponent::Job).to receive(:perform_async).with(params.stringify_keys)
+            submit_request(example.metadata)
+          end
+
+          it 'returns a valid 200 response' do |_example|
+            expect(response).to have_http_status(:unprocessable_entity)
+            expect(parsed_body).to eq(expected_body)
+            expect(Http::UpdateAmountProponent::Job).not_to have_received(:perform_async).with(params.stringify_keys)
+          end
         end
       end
     end
@@ -239,8 +311,17 @@ RSpec.describe ProponentsController do
       end
 
       response(200, 'successful') do
-        let(:proponent) { create(:proponent) }
         let(:id) { proponent.id }
+        let(:proponent) do
+          p = create(:proponent)
+          contact.proponent_id = p.id
+          address.proponent_id = p.id
+          contact.save
+          address.save
+          p
+        end
+        let(:contact) { build(:contact) }
+        let(:address) { build(:address) }
 
         let(:expected_body) do
           {
@@ -250,14 +331,29 @@ RSpec.describe ProponentsController do
             birthdate: proponent.birthdate.to_date.to_s,
             amount: proponent.amount.to_s,
             discount_amount: proponent.discount_amount.to_s,
-            contacts: [],
-            addresses: []
+            contacts: [
+              {
+                id: be_a(Integer),
+                number: contact.number
+              }
+            ],
+            addresses: [
+              {
+                id: be_a(Integer),
+                address: address.address,
+                number: address.number,
+                district: address.district,
+                city: address.city,
+                state: address.state,
+                zip: address.zip
+              }
+            ]
           }
         end
 
         run_test! do |response|
           expect(response).to have_http_status(:ok)
-          expect(parsed_body).to eq(expected_body)
+          expect(parsed_body).to match(expected_body)
         end
       end
     end
