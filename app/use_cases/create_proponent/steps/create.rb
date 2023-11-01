@@ -17,7 +17,7 @@ class CreateProponent::Steps::Create
       _1.taxpayer_number = params[:taxpayer_number]
       _1.birthdate = params[:birthdate]
       _1.amount = params[:amount]
-      _1.discount_amount = calculator.(_1.amount)
+      _1.discount_amount, _1.fee = calculator.(_1.amount)
       _1.addresses_attributes = params[:addresses_attributes].presence || []
       _1.contacts_attributes = params[:contacts_attributes].presence || []
     end

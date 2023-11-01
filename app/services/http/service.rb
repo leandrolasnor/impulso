@@ -6,7 +6,7 @@ class Http::Service
 
   param :params, type: Hash, reader: :private
 
-  def self.call(args)
+  def self.call(args = {})
     if defined?(self::Contract)
       contract = self::Contract.call(args.to_h)
       return [:unprocessable_entity, contract.errors.to_h] if contract.failure?

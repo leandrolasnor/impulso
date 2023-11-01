@@ -8,6 +8,6 @@ class DiscountAmount::Monad
   option :calculator, type: Instance(Proc), default: -> { proc { INSS[_1] } }, reader: :private
 
   def call(amount)
-    Try { calculator.(amount) }
+    Try { calculator.(amount).first }
   end
 end

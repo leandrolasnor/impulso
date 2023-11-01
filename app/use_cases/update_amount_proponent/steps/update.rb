@@ -12,9 +12,11 @@ class UpdateAmountProponent::Steps::Update
   def call(record:, **params)
     ApplicationRecord.transaction do
       record.with_lock do
+        discount_amount, fee = calculator.(params[:amount])
         record.update!(
           amount: params[:amount],
-          discount_amount: calculator.(params[:amount])
+          discount_amount: discount_amount,
+          fee: fee
         )
       end
       publish('proponent.amount.updated', record: record)

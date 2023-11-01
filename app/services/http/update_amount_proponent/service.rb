@@ -1,31 +1,13 @@
 # frozen_string_literal: true
 
 class Http::UpdateAmountProponent::Service < Http::Service
-  option :serializer,
-         type: Interface(:serializer_for),
-         default: -> { Http::UpdateAmountProponent::Serializer },
-         reader: :private
+  option :job, type: Interface(:perform_async), default: -> { Http::UpdateAmountProponent::Job }, reader: :private
+  option :enqueuer, type: Instance(Proc), default: -> { proc { job.perform_async(_1.to_h) } }, reader: :private
 
-  option :transaction, type: Interface(:call), default: -> { UpdateAmountProponent::Transaction.new }, reader: :private
+  Contract = Http::UpdateAmountProponent::Contract.new
 
   def call
-    transaction.call(params) do
-      _1.failure :validate do |f|
-        [:unprocessable_entity, f.errors.to_h]
-      end
-
-      _1.failure :find do
-        [:not_found, { error: I18n.t(:not_found) }]
-      end
-
-      _1.failure do |f|
-        Rails.logger.error(f)
-        [:internal_server_error]
-      end
-
-      _1.success do |updated|
-        [:ok, updated, serializer]
-      end
-    end
+    enqueuer.(params)
+    :ok
   end
 end

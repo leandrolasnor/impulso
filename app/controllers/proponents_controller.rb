@@ -17,8 +17,8 @@ class ProponentsController < BaseController
   end
 
   def update_amount
-    status, content, serializer = Http::UpdateAmountProponent::Service.(update_amount_params)
-    render json: content, status: status, serializer: serializer
+    status, content = Http::UpdateAmountProponent::Service.(update_amount_params)
+    render json: content, status: status
   end
 
   def list
@@ -33,6 +33,11 @@ class ProponentsController < BaseController
 
   def discount_amount
     status, content, serializer = Http::DiscountAmount::Service.(discount_amount_params)
+    render json: content, status: status, serializer: serializer
+  end
+
+  def report
+    status, content, serializer = Http::Report::Service.call
     render json: content, status: status, serializer: serializer
   end
 

@@ -12,10 +12,10 @@ class INSS
     amount = amount.to_f
     TABLE.reduce(0) do |gathered, (percent, wages)|
       if (wages.second..wages.first).cover?(amount)
-        break gathered + (amount - wages.second) * percent
+        break (gathered + (amount - wages.second) * percent).floor(2), percent
       elsif amount > wages.first
         gathered + (wages.first - wages.second) * percent
       end
-    end.floor(2)
+    end
   end
 end
