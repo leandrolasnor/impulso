@@ -2,7 +2,7 @@ FROM ruby:3.2.2-alpine3.18
 RUN apk update && apk add \
     build-base tzdata git sqlite sqlite-dev zsh wget \
     nano curl font-meslo-nerd shadow zsh-vcs redis dos2unix \
-    postgresql-dev postgresql-client
+    postgresql-dev postgresql-client yarn
 
 ENV APP_HOME /app
 WORKDIR $APP_HOME
@@ -15,6 +15,7 @@ RUN git branch --set-upstream-to origin/master
 
 RUN gem install bundler --version '2.4.19'
 RUN bundle
+RUN yarn --cwd ./reacting install
 
 COPY entrypoint.sh /usr/bin/
 RUN dos2unix /usr/bin/entrypoint.sh
