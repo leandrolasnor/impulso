@@ -44,7 +44,7 @@ class ProponentsController < BaseController
   private
 
   def create_params
-    params.permit(
+    params.require(:proponent).permit(
       :name,
       :taxpayer_number,
       :birthdate,
