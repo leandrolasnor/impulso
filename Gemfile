@@ -33,6 +33,8 @@ gem 'figaro'
 
 gem 'cpf_cnpj'
 
+gem 'foreman'
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
