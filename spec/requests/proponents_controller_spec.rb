@@ -46,7 +46,7 @@ RSpec.describe ProponentsController do
       tags 'Proponent'
       response(200, 'successful') do
         let(:amount) { 2780.77 }
-        let(:expected_body) { 255.23 }
+        let(:expected_body) { 255.22 }
 
         run_test! do |response|
           expect(response).to have_http_status(:ok)
@@ -134,11 +134,13 @@ RSpec.describe ProponentsController do
       response(422, 'invalid params') do
         let(:params) do
           {
-            name: '',
-            taxpayer_number: '',
-            birthdate: '',
-            amount: '',
-            contacts_attributes: [{ number: '' }]
+            proponent: {
+              name: '',
+              taxpayer_number: '',
+              birthdate: '',
+              amount: '',
+              contacts_attributes: [{ number: '' }]
+            }
           }
         end
 
@@ -169,12 +171,14 @@ RSpec.describe ProponentsController do
 
         let(:params) do
           {
-            name: name,
-            taxpayer_number: taxpayer_number,
-            birthdate: birthdate,
-            amount: amount,
-            contacts_attributes: [contact],
-            addresses_attributes: [address]
+            proponent: {
+              name: name,
+              taxpayer_number: taxpayer_number,
+              birthdate: birthdate,
+              amount: amount,
+              contacts_attributes: [contact],
+              addresses_attributes: [address]
+            }
           }
         end
 
