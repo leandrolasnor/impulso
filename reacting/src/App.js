@@ -1,8 +1,8 @@
 import './App.css';
-import Employees from './components/employees/component'
+import Proponents from './components/proponents/component'
 
 function App() {
-  return <Employees />
+  return <Proponents />
 }
 
 export default App;

@@ -5,8 +5,8 @@ import { Button } from "react-bootstrap";
 
 const Paginator = () => {
   const dispatch = useDispatch()
-  const employees = useSelector(state => state.employees)
-  const {list, complete} = employees
+  const proponents = useSelector(state => state.proponents)
+  const {list, complete} = proponents
   const [page, setPage] = useState(0)
   useEffect(() => {setPage(1)}, [])
   useEffect(() => {dispatch(getProponents(page))}, [page, dispatch])

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch } from "react-redux";
-import { fireEmployee } from '../employees/actions'
+import { fireProponent } from '../proponents/actions'
 import { Col, Card, Button } from "react-bootstrap";
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -18,32 +18,30 @@ const Name = props => {
   return (fired ? <s>{name}</s> : <h2>{ name }</h2>)
 }
 
-const Employee = (props) => {
+const Proponent = (props) => {
   const dispatch = useDispatch()
 
-  const {id, name, position, hire_date, fired} = props.employee
-  const {showVacationForm, showPromotionForm, showPartitionedForm} = props
+  const {id, name, birthdate, amount, fired} = props.proponent
+  const {showAmountForm, showProponentForm} = props
 
   return(
     <OpaqueCard bg={fired ? 'danger' : ''} className="my-2">
       <Card.Body>
         <Card.Title className="d-flex justify-content-between">
-          <Name fired={fired} name={name} />  
+          <Name fired={fired} name={name} />
           <Col lg={1} className="d-flex justify-content-end">
-            <ButtonFire fired={fired} onClick={() => dispatch(fireEmployee(id))}/>
+            <ButtonFire fired={fired} onClick={() => dispatch(fireProponent(id))}/>
           </Col>
         </Card.Title>
         <Card.Subtitle className="mb-2 text-muted">
-        {position} <Card.Link href="#" onClick={() => showPromotionForm(props.employee)}><FontAwesomeIcon icon={faUser} /></Card.Link>
+          {birthdate} <Card.Link href="#" onClick={() => showProponentForm(props.proponent)}><FontAwesomeIcon icon={faUser} /></Card.Link>
         </Card.Subtitle>
-        <Card.Link href="#" onClick={() => showVacationForm(props.employee)}>Schedule</Card.Link>
-        <Card.Link href="#" onClick={() => showPartitionedForm(props.employee)}>Partitioned Schedule</Card.Link>
       </Card.Body>
       <Card.Body>
-        <Card.Text href="#">{hire_date}</Card.Text>
+        <Card.Link href="#" onClick={() => showAmountForm(props.proponent)}>{amount}</Card.Link>
       </Card.Body>
     </OpaqueCard>
   )
 }
 
-export default Employee
+export default Proponent

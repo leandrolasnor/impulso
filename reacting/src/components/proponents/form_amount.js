@@ -1,21 +1,27 @@
-import { createVacation } from "./actions"
+import { useEffect } from 'react'
+import { updateAmount, discount_amount } from "./actions"
 import { Modal, Card, Row, Col, Container, Form, Button, FloatingLabel } from "react-bootstrap"
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form"
-import moment from "moment"
 
-let FormVacation = (props) => {
+let FormAmount = (props) => {
   const dispatch = useDispatch()
   const {title, show, handleClose} = props
-  const { name, id } = props.show
-  const {register, handleSubmit, reset} = useForm()
-  const tomorrow = moment().add(1, "days").format("YYYY-MM-DD")
+  const { name, id, amount } = props.show
+  const {register, handleSubmit, reset, getValues} = useForm()
+  const proponents = useSelector(state => state.proponents)
+  const { discount_amount_preview } = proponents
+
+  useEffect(() => {
+    reset({ amount: amount });
+    amount === '' ? dispatch({type: "DISCOUNT_AMOUNT_PREVIEW", payload: null}) : dispatch(discount_amount(amount))
+  }, [name]);
 
   return (
     <Col>
       <Modal size="md" centered show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter"> 
+          <Modal.Title id="contained-modal-title-vcenter">
             <blockquote className="blockquote mb-0">
               <p className="mb-0">{title}</p>
               <footer className="mt-0 blockquote-footer">{name}</footer>
@@ -24,7 +30,7 @@ let FormVacation = (props) => {
         </Modal.Header>
         <Modal.Body className="show-grid">
           <Container>
-            <Form onSubmit={handleSubmit(data => dispatch([createVacation({...data, employee_id: id}), reset(), handleClose()]))}>
+            <Form onSubmit={handleSubmit(data => dispatch([updateAmount({...data, id: id}), reset(), handleClose()]))}>
               <Row>
                 <Card>
                   <Card.Body>
@@ -32,28 +38,18 @@ let FormVacation = (props) => {
                       <Row>
                         <Col>
                           <Form.Group>
-                            <FloatingLabel label="start vacation">
-                              <Form.Control type="date" min={tomorrow} {...register('start_date')} />
+                            <FloatingLabel label={ discount_amount_preview === null ? "amount" : `discount amount: ${discount_amount_preview}` }>
+                              <Form.Control placeholder="amount" onMouseLeave={() => getValues('amount') === '' ? dispatch({type: "DISCOUNT_AMOUNT_PREVIEW", payload: null}) : dispatch(discount_amount(getValues('amount')))} {...register('amount')} />
                             </FloatingLabel>
                           </Form.Group>
                         </Col>
-                        <Col>
-                          <Form.Group>
-                            <FloatingLabel label="back to work">
-                              <Form.Control type="date" min={tomorrow} {...register('end_date')} />
-                            </FloatingLabel>
-                          </Form.Group>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Form.Text className="text-muted">Period at least 10 days</Form.Text>
                       </Row>
                     </Form.Group>
                   </Card.Body>
                 </Card>
               </Row>
               <Row>
-                <Button className='mt-3' variant="success" type="submit">Schedule</Button>
+                <Button className='mt-3' variant="success" type="submit">Update Amount</Button>
               </Row>
             </Form>
           </Container>
@@ -65,4 +61,4 @@ let FormVacation = (props) => {
   )
 }
 
-export default FormVacation;
+export default FormAmount;
