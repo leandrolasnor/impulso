@@ -10,11 +10,11 @@ class INSS
 
   def self.[](amount)
     amount = amount.to_f
-    TABLE.reduce(0) do |gathered, (percent, wages)|
+    TABLE.reduce([0, 0]) do |result, (ratio, wages)|
       if (wages.second..wages.first).cover?(amount)
-        break (gathered + (amount - wages.second) * percent).floor(2), percent
+        break (result.first + (amount - wages.second) * ratio).floor(2), ratio
       elsif amount > wages.first
-        gathered + (wages.first - wages.second) * percent
+        [(result.first + (wages.first - wages.second) * ratio).floor(2), ratio]
       end
     end
   end

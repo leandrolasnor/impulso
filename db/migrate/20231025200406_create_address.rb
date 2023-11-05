@@ -13,6 +13,6 @@ class CreateAddress < ActiveRecord::Migration[7.1]
     end
 
     add_foreign_key :addresses, :proponents, column: :proponent_id
-    add_index :addresses, :zip, unique: true
+    add_index :addresses, [:zip, :proponent_id], unique: true
   end
 end

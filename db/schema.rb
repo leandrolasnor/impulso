@@ -24,7 +24,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_28_125012) do
     t.integer "proponent_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["zip"], name: "index_addresses_on_zip", unique: true
+    t.index ["zip", "proponent_id"], name: "index_addresses_on_zip_and_proponent_id", unique: true
   end
 
   create_table "contacts", force: :cascade do |t|
