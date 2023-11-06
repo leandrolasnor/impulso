@@ -1,10 +1,8 @@
 import { CChart } from '@coreui/react-chartjs'
-import { Modal, Card, Row, Col, Container, Form, Button, FloatingLabel } from "react-bootstrap"
+import { Modal, Col, Container } from "react-bootstrap"
 import {useEffect} from 'react'
 import { useDispatch, useSelector } from "react-redux";
 import { get_report } from "./actions"
-
-const _ = require("lodash")
 
 let Report = (props) => {
   const dispatch = useDispatch()
