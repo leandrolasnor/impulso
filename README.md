@@ -8,7 +8,7 @@ Este documento descreve o passo a passo para rodar a aplicação referente ao de
 
 * Uma image docker foi publicada no [Docker Hub](https://hub.docker.com/layers/leandrolasnor/ruby/impulso/images/sha256-f9eecea10e8ae9a222031cbdfe7434f3d4fdc9ee2a1a1431704acfcaad9939a9?context=repo)
 
-* Use o comando `docker compose up db api -d` para baixar a imagem e subir os containers _api_, _db_ e _redis_
+* Use o comando `docker compose up db api react -d` para baixar a imagem e subir os containers _api_, _db_ e _redis_
 * Use o comando `docker compose exec api bundle exec rake db:migrate:reset` para criar o banco de dados
 * Use o comando `docker compose exec api bundle exec rake db:seed` para popular o banco de dados com alguns dados
 
@@ -81,7 +81,7 @@ services:
 
 _presumo que nesse momento seu ambiente esteja devidamente configurado e o banco de dados criado e populado_
 
-* Use o comando `docker compose up react -d` para rodar o frontend
+* Use o comando `docker compose exec react yarn --cwd ./reacting start` para rodar o frontend
 * Use o comando `docker compose exec api rails s -b 0.0.0.0` para rodar o servidor
 * Acesse o frontend [`React`](http://127.0.0.1:3001)
 * Acesse o [`Swagger`](http://localhost:3000/api-docs)
