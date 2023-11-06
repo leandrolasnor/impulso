@@ -41,6 +41,9 @@ services:
   react:
     image: leandrolasnor/ruby:impulso
     container_name: impulso.react
+    stdin_open: true
+    tty: true
+    command: sh
     ports:
         - "3001:3001"
     depends_on:
