@@ -43,3 +43,6 @@ services:
     container_name: impulso.react
     ports:
         - "3001:3001"
+    depends_on:
+      - api
+      - sidekiq

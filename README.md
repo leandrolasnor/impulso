@@ -1,24 +1,97 @@
-# README
+# Desafio para Fullstack - Impulso
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Este documento descreve o passo a passo para rodar a aplicação referente ao desafio da vaga de Fullstack da Impulso
 
-Things you may want to cover:
+[Enunciado do problema](https://drive.google.com/file/d/1t-iMzVf1TuZuE46V0Tt61-Q02Omr0zWe/view?ts=6536cc58)
 
-* Ruby version
+## Considerações sobre o ambiente
 
-* System dependencies
+* Uma image docker foi publicada no [Docker Hub](https://hub.docker.com/layers/leandrolasnor/ruby/impulso/images/sha256-f9eecea10e8ae9a222031cbdfe7434f3d4fdc9ee2a1a1431704acfcaad9939a9?context=repo)
 
-* Configuration
+* Use o comando `docker compose up db api -d` para baixar a imagem e subir os containers _api_, _db_ e _redis_
+* Use o comando `docker compose exec api bundle exec rake db:migrate:reset` para criar o banco de dados
+* Use o comando `docker compose exec api bundle exec rake db:seed` para popular o banco de dados com alguns dados
 
-* Database creation
+```
+# docker-compose.yml
+version: '2.22'
+services:
+  sidekiq:
+    image: leandrolasnor/ruby:impulso
+    container_name: impulso.sidekiq
+    command: sh -c "bundle exec sidekiq"
+    depends_on:
+      - redis
 
-* Database initialization
+  api:
+    image: leandrolasnor/ruby:impulso
+    container_name: impulso.api
+    stdin_open: true
+    tty: true
+    command: sh
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
 
-* How to run the test suite
+  db:
+    image: postgres:16.0
+    container_name: impulso.postgresql
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: impulso
+    ports:
+      - "5432:5432"
 
-* Services (job queues, cache servers, search engines, etc.)
+  redis:
+    image: redis:alpine
+    container_name: impulso.redis
+    environment:
+        ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+        - "6379:6379"
 
-* Deployment instructions
+  react:
+    image: leandrolasnor/ruby:impulso
+    container_name: impulso.react
+    ports:
+        - "3001:3001"
 
-* ...
+```
+
+## Considerações sobre a aplicação
+
+#### Conceitos e ferramentas utilizadas na resolução do problema
+* Princípio de Inversão de Dependência
+* Princípio da Segregação da Interface
+* Princípio da responsabilidade única
+* Princípio da substituição de Liskov
+* Princípio Aberto-Fechado
+* Background Processing
+* Domain Driven Design
+* Código Limpo
+* Rubocop
+* Bullet
+* Dry-rb
+* RSpec
+
+## Passo a Passo de como executar a solução
+
+_presumo que nesse momento seu ambiente esteja devidamente configurado e o banco de dados criado e populado_
+
+* Use o comando `docker compose up react -d` para rodar o frontend
+* Use o comando `docker compose exec api rails s -b 0.0.0.0` para rodar o servidor
+* Acesse o frontend [`React`](http://127.0.0.1:3001)
+* Acesse o [`Swagger`](http://localhost:3000/api-docs)
+* Verifique o campo `defaultHost` na interface do [`Swagger`](http://localhost:3000/api-docs) e avalie se a url esta correta (_127.0.0.1:3000_ ou _localhost:3000_)
+
+* Nessa interface você poderá validar a documentação dos endpoints e testá-los, enviando algumas requisições http
+
+    - cria proponente
+    - lista os proponentes
+    - atualiza os dados de um proponente
+    - atualiza o salário de um proponente
+    - remove um proponente
+    - mostra um gráfico de quantidades de proponentes agrupados por alícota de inss
