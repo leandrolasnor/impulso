@@ -43,7 +43,7 @@ RSpec.describe ProponentsController do
   path '/v1/discount_amount/{amount}' do
     parameter name: 'amount', in: :path, type: :string, description: 'amount'
     get('discount_amount proponent') do
-      tags 'Proponent'
+      tags 'Discount Amount'
       response(200, 'successful') do
         let(:amount) { 2780.77 }
         let(:expected_body) { 255.22 }
@@ -58,7 +58,7 @@ RSpec.describe ProponentsController do
 
   path '/v1/proponents/report' do
     get('report') do
-      tags 'Proponent'
+      tags 'Proponents'
       response(200, 'successful') do
         let(:expected_body) do
           {
@@ -93,7 +93,7 @@ RSpec.describe ProponentsController do
 
   path '/v1/proponents' do
     post('create proponent') do
-      tags 'Proponent'
+      tags 'Proponents'
       consumes "application/json"
       parameter name: :params, in: :body, schema: {
         type: :object,

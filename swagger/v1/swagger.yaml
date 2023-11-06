@@ -34,7 +34,15 @@ paths:
     get:
       summary: discount_amount proponent
       tags:
-      - Proponent
+      - Discount Amount
+      responses:
+        '200':
+          description: successful
+  "/v1/proponents/report":
+    get:
+      summary: report
+      tags:
+      - Proponents
       responses:
         '200':
           description: successful
@@ -42,9 +50,11 @@ paths:
     post:
       summary: create proponent
       tags:
-      - Proponent
+      - Proponents
       parameters: []
       responses:
+        '422':
+          description: invalid params
         '201':
           description: successful
       requestBody:
@@ -117,6 +127,8 @@ paths:
       responses:
         '200':
           description: successful
+        '422':
+          description: successful
       requestBody:
         content:
           application/json:
@@ -158,6 +170,8 @@ paths:
       responses:
         '404':
           description: not found
+        '422':
+          description: invalid params
         '200':
           description: successful
       requestBody:
@@ -222,10 +236,12 @@ paths:
         schema:
           type: string
       responses:
+        '404':
+          description: successful
         '200':
           description: successful
 servers:
-- url: https://{defaultHost}
+- url: http://{defaultHost}
   variables:
     defaultHost:
       default: 127.0.0.1:3000
