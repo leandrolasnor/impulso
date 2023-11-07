@@ -82,7 +82,7 @@ services:
 _presumo que nesse momento seu ambiente esteja devidamente configurado e o banco de dados criado e populado_
 
 * Use o comando `docker compose exec react yarn --cwd ./reacting start` para rodar o frontend
-* Use o comando `docker compose exec api rails s -b 0.0.0.0` para rodar o servidor web
+* Use o comando `docker compose exec api foreman start` para rodar o servidor web e sidekiq
 * Acesse o frontend [`React`](http://localhost:3001)
 * Acesse o [`Swagger`](http://localhost:3000/api-docs)
 * Verifique o campo `defaultHost` na interface do [`Swagger`](http://localhost:3000/api-docs) e avalie se a url esta correta (_127.0.0.1:3000_ ou _localhost:3000_)
