@@ -57,8 +57,6 @@ services:
 
 * Uma image docker foi publicada no [Docker Hub](https://hub.docker.com/layers/leandrolasnor/ruby/impulso/images/sha256-f9eecea10e8ae9a222031cbdfe7434f3d4fdc9ee2a1a1431704acfcaad9939a9?context=repo)
 
-## Considerações sobre a aplicação
-
 #### Conceitos e ferramentas utilizadas na resolução do problema
 * Princípio de Inversão de Dependência
 * Princípio da Segregação da Interface
@@ -98,13 +96,17 @@ __Nessa etapa as `migrations` foram executadas e o banco de dados se encontra po
 
 _presumo que nesse momento seu ambiente esteja devidamente configurado e o banco de dados criado e populado_
 
+##### Frontend
 * Use o comando `make frontend` para rodar o frontend
+##### Backend
 * Use o comando `make backend` para rodar o backend
-* Acesse o frontend [`React`](http://localhost:3001) e a documentação [`Swagger`](http://localhost:3000/api-docs)
 
-## Documentação
 
-* Acesse o [`Swagger`](http://localhost:3000/api-docs)
+_Acesse o frontend [`http://localhost:3001`](http://localhost:3001) e a documentação [`http://localhost:3000/api-docs`](http://localhost:3000/api-docs)_
+
+## Swagger
+
+* Acesse a interface do [`Swagger`](http://localhost:3000/api-docs)
 * Verifique o campo `defaultHost` na interface do [`Swagger`](http://localhost:3000/api-docs) e avalie se a url esta correta (_127.0.0.1:3000_ ou _localhost:3000_)
 
 * Nessa interface você poderá validar a documentação dos endpoints e testá-los, enviando algumas requisições http
