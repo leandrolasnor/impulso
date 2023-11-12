@@ -6,12 +6,6 @@ Este documento descreve o passo a passo para rodar a aplicação referente ao de
 
 ## Considerações sobre o ambiente
 
-* Uma image docker foi publicada no [Docker Hub](https://hub.docker.com/layers/leandrolasnor/ruby/impulso/images/sha256-f9eecea10e8ae9a222031cbdfe7434f3d4fdc9ee2a1a1431704acfcaad9939a9?context=repo)
-
-* Use o comando `docker compose up db api react -d` para baixar a imagem e subir os containers _api_, _db_, _redis_ e _react_
-* Use o comando `docker compose exec api bundle exec rake db:migrate:reset` para criar o banco de dados
-* Use o comando `docker compose exec api bundle exec rake db:seed` para popular o banco de dados com alguns dados
-
 ```
 # docker-compose.yml
 version: '2.22'
@@ -61,6 +55,8 @@ services:
 
 ```
 
+* Uma image docker foi publicada no [Docker Hub](https://hub.docker.com/layers/leandrolasnor/ruby/impulso/images/sha256-f9eecea10e8ae9a222031cbdfe7434f3d4fdc9ee2a1a1431704acfcaad9939a9?context=repo)
+
 ## Considerações sobre a aplicação
 
 #### Conceitos e ferramentas utilizadas na resolução do problema
@@ -77,13 +73,38 @@ services:
 * Dry-rb
 * RSpec
 
+## Considerações sobre a aplicação
+
+```
+# makefile
+all: prepare run
+
+prepare:
+  docker compose up db api react -d
+  docker compose exec api bundle exec rake db:migrate:reset
+  docker compose exec api bundle exec rake db:seed
+
+run:
+  docker compose exec react yarn --cwd ./reacting start
+  docker compose exec api rails s -b 0.0.0.0
+  docker compose exec api foreman start
+```
+
+* Faça o clone deste repositório ou copie os arquivos `makefile` e `docker-compose.yml` para um pasta na sua máquina
+
+* Use o comando `make prepare` para baixar a imagem e subir os containers _api_, _react_, _db_ e _redis_
+
+__Nessa etapa as `migrations` foram executadas e o banco de dados se encontra populado com alguns dados__
+
 ## Passo a Passo de como executar a solução
 
 _presumo que nesse momento seu ambiente esteja devidamente configurado e o banco de dados criado e populado_
 
-* Use o comando `docker compose exec react yarn --cwd ./reacting start` para rodar o frontend
-* Use o comando `docker compose exec api foreman start` para rodar o servidor web e sidekiq
+* Use o comando `make run` para rodar o frontend, o servidor web e o sidekiq
 * Acesse o frontend [`React`](http://localhost:3001)
+
+## Documentação
+
 * Acesse o [`Swagger`](http://localhost:3000/api-docs)
 * Verifique o campo `defaultHost` na interface do [`Swagger`](http://localhost:3000/api-docs) e avalie se a url esta correta (_127.0.0.1:3000_ ou _localhost:3000_)
 
@@ -94,4 +115,4 @@ _presumo que nesse momento seu ambiente esteja devidamente configurado e o banco
     - atualiza os dados de um proponente
     - atualiza o salário de um proponente
     - remove um proponente
-    - mostra um gráfico de quantidades de proponentes agrupados por alícota de inss
+    - mostra um gráfico de quantidades de proponentes agrupados por alícota de INSS
