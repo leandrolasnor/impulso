@@ -77,17 +77,15 @@ services:
 
 ```
 # makefile
-all: prepare run
-
 prepare:
-  docker compose up db api react -d
-  docker compose exec api bundle exec rake db:migrate:reset
-  docker compose exec api bundle exec rake db:seed
+	docker compose up db api react -d
+	docker compose exec api bundle exec rake db:migrate:reset
+	docker compose exec api bundle exec rake db:seed
 
-run:
-  docker compose exec react yarn --cwd ./reacting start
-  docker compose exec api rails s -b 0.0.0.0
-  docker compose exec api foreman start
+frontend:
+	docker compose exec react yarn --cwd ./reacting start
+backend:
+	docker compose exec api foreman start
 ```
 
 * Faça o clone deste repositório ou copie os arquivos `makefile` e `docker-compose.yml` para um pasta na sua máquina
@@ -100,8 +98,9 @@ __Nessa etapa as `migrations` foram executadas e o banco de dados se encontra po
 
 _presumo que nesse momento seu ambiente esteja devidamente configurado e o banco de dados criado e populado_
 
-* Use o comando `make run` para rodar o frontend, o servidor web e o sidekiq
-* Acesse o frontend [`React`](http://localhost:3001)
+* Use o comando `make frontend` para rodar o frontend
+* Use o comando `make backend` para rodar o backend
+* Acesse o frontend [`React`](http://localhost:3001) e a documentação [`Swagger`](http://localhost:3000/api-docs)
 
 ## Documentação
 
