@@ -50,9 +50,14 @@ services:
   react:
     image: leandrolasnor/ruby:impulso
     container_name: impulso.react
+    stdin_open: true
+    tty: true
+    command: sh
     ports:
         - "3001:3001"
-
+    depends_on:
+      - api
+      - sidekiq
 ```
 
 * Uma image docker foi publicada no [Docker Hub](https://hub.docker.com/layers/leandrolasnor/ruby/impulso/images/sha256-f9eecea10e8ae9a222031cbdfe7434f3d4fdc9ee2a1a1431704acfcaad9939a9?context=repo)
