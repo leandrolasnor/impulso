@@ -1,0 +1,36 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  api:
+    image: leandrolasnor/ruby:impulso
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    container_name: impulso.api
+    stdin_open: true
+    tty: true
+    command: sh
+    ports:
+    - 3000:3000
+    - 3001:3001
+    depends_on:
+    - db
+    - redis
+
+  db:
+    image: postgres:16.0
+    container_name: impulso.postgresql
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: impulso
+    ports:
+    - 5432:5432
+
+  redis:
+    image: redis:alpine
+    container_name: impulso.redis
+    environment:
+        ALLOW_EMPTY_PASSWORD: yes
+    ports:
+    - 6379:6379
