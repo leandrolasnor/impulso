@@ -12,8 +12,10 @@ COPY . $APP_HOME
 RUN bundle
 RUN yarn --cwd ./reacting install
 
-RUN dos2unix ./.devcontainer/*.sh
-RUN chmod +x ./.devcontainer/*.sh
+RUN dos2unix ./.devcontainer/boot.sh
+RUN dos2unix ./.devcontainer/start.sh
+RUN chmod +x ./.devcontainer/boot.sh
+RUN chmod +x ./.devcontainer/start.sh
 
 RUN rm -rf /root/.oh-my-zsh
 RUN sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
